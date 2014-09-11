@@ -32,7 +32,7 @@ def statfunc():
 ## Writing result to file
 	   f.write(out)
 	f.close()
-###FIXME Duplicate function
+###Duplicate function
 	for i in dlist:
            curDir = os.path.join(dpath, i)
            cmd = [du, du_arg2, curDir]
