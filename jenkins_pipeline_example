@@ -1,0 +1,12 @@
+###Way to supress credentials from pipeline output
+
+
+node ("python-jira-slave"){
+    sh  "cd /tmp; mkdir sync\
+        && cd sync; git clone http://gerrit:8080/Jira_sync .\
+        "
+    withCredentials([file(credentialsId: '1d9322b9-feeb-4b06-930b-f2ce1a5d5ba6', variable: 'mycreds')]) {
+    sh('#!/bin/sh -e\n' + 'echo "`cat $mycreds`" > $HOME/.creds')
+    }
+    sh "python3 /tmp/sync/projsync.py --source AHMLDWH --dest AHMLINFR"
+}
