@@ -5,11 +5,11 @@
 BACKUPNAME="$1"
 DBNAME="$2"
 TTIME="$3"
-#LC_ALL="ASCII" 2> /dev/null
 LC_ALL="en_US.UTF-8"
 LOGFILE="/var/lib/barman/recover.log"
 ARCDIR="/u01/services/barman/archives"
 BACKUPDIR="/u01/services/barman/$DBNAME/base/$BACKUPNAME/data"
+LASTBACKUP="$(barman list-backup $SERVER | awk '!/FAILED/ {print $2}' | head -n 1)"
 
 ###Avoid code duplication
 postcheck () {
@@ -105,12 +105,18 @@ else
 fi
 
 ###Now we need to unpack given archive to our directory
-cd $BACKUPDIR
-echo "$(date +"%m.%d.%y-%T") Uncompressing archive to backup dir..." | tee -a $LOGFILE
-tar --strip-components 7 -xf $ARCDIR/$BACKUPNAME\.tar\.gz
-postcheck
-cd -
-
+#Will unpack only if we do not use latest backup that present unpacked.
+if [ "$BACKUPNAME" = "$LASTBACKUP" ];
+then
+	echo "$(date +"%m.%d.%y-%T") INFO You are going to use latest backup, skipping archive uncompressing." | tee -a $LOGFILE
+else
+	echo "$(date +"%m.%d.%y-%T") INFO You are not going to use latest backup, will uncompress archive for that backup." | tee -a $LOGFILE
+	cd $BACKUPDIR
+	echo "$(date +"%m.%d.%y-%T") Uncompressing archive to backup dir..." | tee -a $LOGFILE
+	tar --strip-components 7 -xf $ARCDIR/$BACKUPNAME\.tar\.gz
+	postcheck
+	cd -
+fi
 ###Now assembling recover command for Barman
 #Will make up --target-time parameter a bit, because that option kinda tricky. If it not specified it will be not append to command.
 if [ "$TTIME" != "" ];
