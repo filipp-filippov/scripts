@@ -132,6 +132,6 @@ postcheck
 
 #Run recovery command
 echo "$(date +"%m.%d.%y-%T") Starting recovery procedure." | tee -a $LOGFILE
-barman recover prod-db-vip.ahml1.ru $BACKUPNAME /backup/recover/recover_$(date -d "$TTIME" "+%Y-%m-%d%H:%M:%S") --target-time "$TTIMESTRING" --remote-ssh-command="ssh -p 2222 barman@$DBNAME"
+barman recover $DBNAME $BACKUPNAME /backup/recover/recover_$(date -d "$TTIME" "+%Y-%m-%d%H:%M:%S") --target-time "$TTIMESTRING" --remote-ssh-command="ssh -p 2222 barman@$DBNAME"
 postcheck
 
