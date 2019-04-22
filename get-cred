@@ -24,11 +24,11 @@ for arg_action in args.__dict__:
       try:
         base64.decodestring(args.__dict__['value'])
       except:
-        print "String should be correct base64"
+        print "String should be correct"
         sys.exit(1)
-        
+
 ###Set filename to parse
-secret_file = '/tmp/secretfile'
+secret_file = '/tmp/secret'
 
 ###Define actions func
 
@@ -44,7 +44,7 @@ def getpass(resource):
 def storepass(key, value):
   s_data = open(secret_file, 'a')
   s_data.write(key + ':' + ' ' + value + '\n')
-  
+
 def updatepass(key, value):
   s_data = open(secret_file, 'r')
   datalines=s_data.readlines()
@@ -78,26 +78,40 @@ if action == 'get':
     print base64.b64decode(getpass(args.get)).rstrip().strip('\'')
   except TypeError:
     print 'Key not found'
+    sys.exit(1)
+  except IOError:
+    print 'Insufficient permissions'
+    sys.exit(1)
 
 if action == 'store':
-  getpass(args.store)
+  try:
+    getpass(args.store)
+  except IOError:
+    print 'Insufficient permissions'
+    sys.exit(1)
   if get_pass is not None:
     print 'This resource already exitsts'
     sys.exit(1)
   storepass(args.store, args.value)
 
 if action == 'update':
-  getpass(args.update)
+  try:
+    getpass(args.update)
+  except IOError:
+    print 'Insufficient permissions'
+    sys.exit(1)
   if get_pass is None:
     print 'This resource does not exitsts'
     sys.exit(1)
   updatepass(args.update, args.value)
 
 if action == 'delete':
-  getpass(args.delete)
+  try:
+    getpass(args.delete)
+  except IOError:
+    print 'Insufficient permissions'
+    sys.exit(1)
   if get_pass is None:
     print 'This resource does not exitsts'
     sys.exit(1)
   deletepass(args.delete)
-
-
