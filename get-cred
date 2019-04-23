@@ -6,7 +6,7 @@ import base64
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--get', action='store', help='Key which value you like to get')
-parser.add_argument('--store', action='store', help='Add new key to store')
+parser.add_argument('--store', action='store', help='Add new key-value to store')
 parser.add_argument('--update', action='store', help='Key to update')
 parser.add_argument('--value', action='store', help='New value of key. DO NOT put unencrypted data here')
 parser.add_argument('--delete', action='store', help='Key to delete')
