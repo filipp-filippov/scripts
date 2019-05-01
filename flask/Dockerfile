@@ -7,7 +7,7 @@ RUN apt-get update -y && \
 
 RUN pip install flask 
 
-COPY app/ /app
+COPY flaskapp/ /app
 
 ENTRYPOINT [ "python" ]
 
