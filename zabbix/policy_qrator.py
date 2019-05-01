@@ -26,7 +26,7 @@ t_tr_cnt=[]
 p_tr_ppt=0
 
 ###Zabbix access
-gca=commands.getoutput('/opt/zabbix-plugins/get-cred zapi')
+gca=commands.getoutput('/opt/get-cred zapi')
 zapi = ZabbixAPI('http://myzabbix.my/zabbix/')
 zapi.login('zapi', gca)
 

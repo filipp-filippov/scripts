@@ -15,7 +15,7 @@ import psycopg2
 charrange=['\\','`','*','_','{','}','[',']','(',')','>','#','+','-','!','$','\'']
 
 ###Zabbix access
-gca=commands.getoutput('/opt/zabbix-plugins/get-cred zapi')
+gca=commands.getoutput('/opt/get-cred zapi')
 zapi = ZabbixAPI('http://myzabbix.my/zabbix/')
 zapi.login('zapi', gca)
 
@@ -75,7 +75,6 @@ conn=psycopg2.connect("dbname='zabbix' user='zabbix'")
 cur = conn.cursor()
 cur.execute("""SELECT triggerid_down FROM trigger_depends""")
 allDepTrs = str(cur.fetchall()).replace('\'', '').replace('(', '').replace(')', '').replace(',', '').replace('L', '').replace(']', '').replace('[', '').split()
-###
 
 ###All hosts with deps
 global allDepHosts
@@ -107,7 +106,6 @@ def proxyGetHosts(proxy, key):
  for host in zapi.host.get(proxyids=proxyId, expandData='true', output=['extend','name','hostid']):
   proxy_belongHosts.append(host[key])
  return proxy_belongHosts
-##clear belong?
 
 def getHostObjects(host):
  global host_hostname
@@ -250,7 +248,7 @@ def checkProxyTriggers(proxy):
  for trigger in zapi.trigger.get(hostids=hostsWithoutProxy, output='extend', expandData='true', selectDependencies='true'):
   for dep in trigger['dependencies']:
    if dep['triggerid'] == getProxyItem(proxy, 'triggerid'):
-    wrongProxyDeps.append(trigger['triggerid']) ### ??? what for ??? ###, trigger['hostname']])
+    wrongProxyDeps.append(trigger['triggerid'])
     wrongProxyDeps = uniq(wrongProxyDeps)
  return wrongProxyDeps
     
@@ -281,8 +279,6 @@ def fixproxy(proxy):
    print 'Hostname: {0}'.format(host)
    hostHealthCheck(host)
  if (args.proxy and args.short):
-#  print 0
-#  sys.exit()
   totalProxyProbsNum = 0
   proxy_ProbsNum = len(wrongProxyDeps) + len(proxy_hostsIndepTriggers) + len(proxy_hostsWrongTriggers)
   totalProxyProbsNum = totalProxyProbsNum + proxy_ProbsNum
@@ -302,13 +298,10 @@ def fixproxy(proxy):
    totalProxyProbsNum = totalProxyProbsNum + proxy_ProbsNum
   if args.debug or args.detail:
    proxy_ProbsNum = len(wrongProxyDeps) + len(proxy_hostsIndepTriggers) + len(proxy_hostsWrongTriggers)
-   print "TPP =  ", totalProxyProbsNum
    totalProxyProbsNum = totalProxyProbsNum + proxy_ProbsNum
    print "Proxy is:", proxy
    print len(wrongProxyDeps), len(proxy_hostsIndepTriggers), len(proxy_hostsWrongTriggers)
    print 'WrongDeps : {0} NoDeps : {1} WrongTrs : {2}'.format(wrongProxyDeps, proxy_hostsIndepTriggers, proxy_hostsWrongTriggers)
-   print "proxy_ProbsNum:", proxy_ProbsNum
-   print "totalProxyProbsNum atm:", totalProxyProbsNum
 
 def main():
  global totalProxyProbsNum
