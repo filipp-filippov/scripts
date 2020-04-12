@@ -9,7 +9,7 @@ kafka_bootstrap = os.environ['KAFKA_BOOTSTRAP_SERVERS']
 print(kafka_bootstrap)
 
 admin_client = KafkaAdminClient(bootstrap_servers=kafka_bootstrap,
-                                client_id='AzureDevOps')
+                                client_id='CD automation')
 
 client = kafka.KafkaClient(bootstrap_servers=kafka_bootstrap)
 update = client.cluster.request_update()
