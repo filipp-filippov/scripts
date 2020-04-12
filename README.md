@@ -15,4 +15,6 @@ Since i had 15 zabbix proxies with about 4000 triggers configured i was need to 
 
 **projsync.py**: Simple script that sync Jira project elements between two projects.<br />
 
+**kafka**: This directory contains a scripts for creation of kafka topics from yaml template. It also will create additional partitions for given topics if it's number less than in template. <br />
+
  Will be more
