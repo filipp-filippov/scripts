@@ -1,0 +1,14 @@
+topics:
+  - name: 'mynewtopic'
+    replication-factor: 1
+    partitions: 1
+  - name: 'mynewtopic1'
+    replication-factor: 1
+    partitions: 2
+  - name: 'mynewtopic2'
+    replication-factor: 1
+    partitions: 3
+  - name: 'mynewtopic'
+    replication-factor: 1
+    partitions: 4
+
