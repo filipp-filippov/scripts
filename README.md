@@ -17,4 +17,6 @@ Since i had 15 zabbix proxies with about 4000 triggers configured i was need to 
 
 **kafka**: This directory contains a scripts for creation of kafka topics from yaml template. It also will create additional partitions for given topics if it's number less than in template. <br />
 
+**sync_kv**: Cript for Azure keyvault secrets migration(export and import) using Azure application as credentials provider. You will need to specify source KV, destination KV and Azure application credentaials. Everything else will be done by script <br />
+
  Will be more
