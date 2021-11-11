@@ -32,14 +32,27 @@ def get_bearer(clientsecret, clientid, tenantid):
     beartoken = requests.post('https://login.microsoftonline.com/' + tenantid + '/oauth2/v2.0/token', payload).json()['access_token']
     return beartoken
 
+def urlfetch(url):
+    secretsData = requests.get(url, headers=getHeaders).json()
+    for secret in secretsData['value']:
+        try:
+            srcSecretsKeyList.append(secret['id'].split('/')[4])
+        except AttributeError:
+            print('!AttrError!')
+        continue
+    if secretsData['nextLink'] is not None:
+        urlfetch(secretsData['nextLink'])
+
 # List & Dump KV secrets names
 
 
 srcBearToken = get_bearer(args.srcSecret, args.srcClientId, args.srcTenantId)
-print(srcBearToken)
-kvURL = args.srcKv + '/secrets?api-version=7.2'
+
+kvURL = args.srcKv + 'secrets?maxresults=25&api-version=7.2'
 getHeaders = {'Authorization': 'Bearer ' + srcBearToken}
 srcInitSecretsData = requests.get(kvURL, headers=getHeaders).json()
+
+print('Total secrets to export' + str(len(srcInitSecretsData)))
 
 ## Dump
 for secret in srcInitSecretsData['value']:
@@ -49,9 +62,16 @@ for secret in srcInitSecretsData['value']:
         print('!AttrError!')
         continue
 
+if srcInitSecretsData['nextLink'] is not None:
+    urlfetch(srcInitSecretsData['nextLink'])
+
+print('Final secrets count:' + str(len(srcSecretsKeyList)))
+print(srcSecretsKeyList)
+
 # Get & Dump KV secrets values
 
 for secret in srcSecretsKeyList:
+    print('Secret in process' + secret)
     secretData = requests.get(args.srcKv + '/secrets/' + secret + '/?api-version=7.2', headers=getHeaders).json()
     secretKey = secretData.get('id').split('/')[4]
     secretValue = secretData.get('value')
@@ -60,7 +80,6 @@ for secret in srcSecretsKeyList:
     ## Dump
     with open(workFolder + '/srcKvDump', 'a') as srcDumpFile:
         srcDumpFile.write('%s: %s\n' % (secretKey, secretValue))
-    srcDumpFile.close()
 
 print('Secrets successfully exported')
 
